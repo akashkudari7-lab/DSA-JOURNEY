@@ -1,0 +1,139 @@
+# Binary Search
+
+---
+
+## 1. Standard Binary Search
+
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int binarySearch(vector<int>& nums, int tar) {
+    int st = 0, end = nums.size() - 1;
+    while (st <= end) {
+        int mid = st + (end - st) / 2;
+        if (nums[mid] == tar) {
+            return mid;
+        }
+        else if (tar <= nums[mid]) {
+            end = mid - 1;
+        }
+        else {
+            st = mid + 1;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    vector<int> nums = {1, 3, 5, 7, 9};
+    int tar = 5;
+    cout << binarySearch(nums, tar) << endl;
+    return 0;
+}
+```
+
+---
+
+## 2. Search in Rotated Sorted Array
+
+### LeetCode Solution Class:
+```cpp
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int search(vector<int>& nums, int tar) {
+        int st = 0;
+        int end = nums.size() - 1;
+
+        while (st <= end) {
+            int mid = st + (end - st) / 2;
+
+            if (nums[mid] == tar) {
+                return mid;
+            }
+
+            // Left half is sorted
+            if (nums[st] <= nums[mid]) {
+                if (nums[st] <= tar && tar < nums[mid]) {
+                    end = mid - 1;
+                }
+                else {
+                    st = mid + 1;
+                }
+            }
+            // Right half is sorted
+            else {
+                if (nums[mid] < tar && tar <= nums[end]) {
+                    st = mid + 1;
+                }
+                else {
+                    end = mid - 1;
+                }
+            }
+        }
+
+        return -1;
+    }
+};
+```
+
+---
+
+### Standalone Executable (with Console Input):
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter size: ";
+    cin >> n;
+
+    int arr[n];
+
+    cout << "Enter elements: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    int target;
+    cout << "Enter target: ";
+    cin >> target;
+
+    int st = 0;
+    int end = n - 1;
+
+    while (st <= end) {
+        int mid = st + (end - st) / 2;
+
+        if (arr[mid] == target) {
+            cout << "Target found at index: " << mid;
+            return 0;
+        }
+
+        // Left half is sorted
+        if (arr[st] <= arr[mid]) {
+            if (arr[st] <= target && target < arr[mid]) {
+                end = mid - 1;
+            } else {
+                st = mid + 1;
+            }
+        }
+        // Right half is sorted
+        else {
+            if (arr[mid] < target && target <= arr[end]) {
+                st = mid + 1;
+            } else {
+                end = mid - 1;
+            }
+        }
+    }
+
+    cout << "Target not found";
+    return 0;
+}
+```

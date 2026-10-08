@@ -1,12 +1,6 @@
-# 🚀 DSA Journey
+# DSA-JOURNEY
 
-Welcome to my DSA Journey! 👋
-
-This repository contains my journey of learning and practicing Data Structures and Algorithms (DSA) using C++.
-
-The goal is to build strong problem-solving skills and prepare for coding interviews and placements.
-
----
+A structured repository for Data Structures, Algorithms, and Language Mastery notes and implementations.
 
 ## Topics
 
@@ -17,3 +11,5 @@ The goal is to build strong problem-solving skills and prepare for coding interv
 ### 📁 pointers
 1. [Pointers: Core Concepts & Quick Reference](./pointers/1.%20pointers%20basics.md) — Memory addresses, address-of (`&`), dereference (`*`), pointer arithmetic, special pointers, and references comparison.
 2. [Pointer Problems](./pointers/pointerproblems/README.md) — Pointer exercises and practice problems.
+3. [Binary Search](./pointers/binary%20search/README.md) — Binary Search algorithms, two-pointer search spaces, and problems.
+

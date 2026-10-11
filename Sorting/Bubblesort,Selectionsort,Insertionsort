@@ -82,7 +82,7 @@ int main(){
     return 0;
 }
 
-Insertion Sort takes one element at a time and inserts it into its correct position in the already sorted part.
+3.Insertion Sort takes one element at a time and inserts it into its correct position in the already sorted part.
 
 Example:
 5 3 8 1

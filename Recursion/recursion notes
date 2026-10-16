@@ -1,0 +1,315 @@
+# Recursion: Core Concepts & Comprehensive Guide (C++)
+
+---
+
+## 1. What is Recursion?
+
+**Recursion** is a programming technique where a function **calls itself** directly or indirectly to solve a smaller subproblem of the original problem.
+
+A problem can be solved recursively if:
+1. It can be broken down into smaller subproblems of the exact same type.
+2. There is a simple stopping condition (base case) that can be solved directly without recursion.
+
+```
+                    ┌─────────────────────────┐
+                    │    Original Problem     │
+                    └───────────┬─────────────┘
+                                │ Calls itself with
+                                │ smaller input
+                                ▼
+                    ┌─────────────────────────┐
+                    │     Smaller Subproblem  │
+                    └───────────┬─────────────┘
+                                │
+                                ▼
+                    ┌─────────────────────────┐
+                    │        Base Case        │ (Returns known answer)
+                    └─────────────────────────┘
+```
+
+---
+
+## 2. Anatomy of Every Recursive Function
+
+Every valid recursive function must contain two fundamental parts:
+
+1. **Base Case (Stopping Condition):**
+   - The condition where recursion stops.
+   - Prevents infinite loops and stack overflow errors.
+   - Returns a known direct answer.
+
+2. **Recursive Step / Relation (Work & Self-Call):**
+   - The logic that reduces the problem size.
+   - Calls the function again with updated, smaller parameters moving towards the base case.
+
+### Golden Pattern in C++:
+
+```cpp
+ReturnType recursiveFunction(parameters) {
+    // 1. Base Case (Always check this first!)
+    if (stoppingCondition) {
+        return baseResult;
+    }
+
+    // 2. Self Work / Subproblem Call
+    // Move parameters closer to the base case
+    return recursiveFunction(smallerParameters);
+}
+```
+
+---
+
+## 3. How Recursion Works in Memory (Call Stack)
+
+When a function is called in C++, a chunk of memory called a **Stack Frame (Activation Record)** is allocated on the **Call Stack**. It stores:
+- Local variables
+- Function parameters
+- Return address (where to jump back after execution)
+
+Recursion executes in two distinct phases:
+1. **Winding Phase (Calling Phase):** Functions keep calling themselves; new stack frames are pushed onto the stack.
+2. **Unwinding Phase (Returning Phase):** When the base case is reached, functions start returning values, and their stack frames are popped off the stack one by one.
+
+### Call Stack Lifecycle:
+
+```
+[ Push Phase: Going Down ]              [ Pop Phase: Returning Up ]
+
+  ┌──────────────────────┐                ┌──────────────────────┐
+  │  factorial(1) [Base] │ ── returns 1 ──▶ [ Popped off stack ] │
+  ├──────────────────────┤                ├──────────────────────┤
+  │     factorial(2)     │ ── returns 2 ──▶ [ Popped off stack ] │
+  ├──────────────────────┤                ├──────────────────────┤
+  │     factorial(3)     │ ── returns 6 ──▶ [ Popped off stack ] │
+  ├──────────────────────┤                ├──────────────────────┤
+  │     factorial(4)     │ ── returns 24 ─▶ [ Popped off stack ] │
+  ├──────────────────────┤                ├──────────────────────┤
+  │        main()        │                │        main()        │
+  └──────────────────────┘                └──────────────────────┘
+```
+
+> [!WARNING]
+> **Stack Overflow:** If the base case is missing or unreachable, the function calls itself indefinitely until the call stack runs out of memory, resulting in a **Segmentation Fault / Stack Overflow**.
+
+---
+
+## 4. Types of Recursion
+
+| Type | Description | Example |
+| :--- | :--- | :--- |
+| **Tail Recursion** | Recursive call is the very last operation performed before returning. Can be optimized by compilers. | `return helper(n - 1, acc * n);` |
+| **Head Recursion** | Recursive call is made before any other computation/processing in the function. | Calling `func(n - 1)` then printing `n`. |
+| **Tree Recursion** | Function makes two or more recursive calls within its body (branches like a tree). | Fibonacci: `fib(n-1) + fib(n-2)` |
+| **Indirect Recursion** | Function A calls Function B, and Function B calls Function A. | Mutual recursion |
+
+---
+
+## 5. Example 1: Factorial Calculation
+
+### Mathematical Formulation
+$$n! = n \times (n - 1)! \quad \text{for } n \ge 1$$
+$$\text{Base Case: } 0! = 1, \quad 1! = 1$$
+
+### Recursion Trace for `factorial(4)`
+```
+factorial(4)
+  = 4 * factorial(3)
+  = 4 * (3 * factorial(2))
+  = 4 * (3 * (2 * factorial(1)))
+  = 4 * (3 * (2 * 1))           <-- Base case reached
+  = 4 * (3 * 2)
+  = 4 * 6
+  = 24
+```
+
+### C++ Implementation
+
+```cpp
+#include <iostream>
+
+// Returns n! for a non-negative integer n
+long long factorial(int n) {
+    // 1. Base Case: 0! = 1 and 1! = 1
+    if (n <= 1) {
+        return 1;
+    }
+
+    // 2. Recursive Step: n! = n * (n - 1)!
+    return n * factorial(n - 1);
+}
+
+int main() {
+    int num = 5;
+    std::cout << "Factorial of " << num << " is: " << factorial(num) << "\n";
+    // Output: 120
+    return 0;
+}
+```
+
+### Complexity Analysis
+- **Time Complexity:** $\mathcal{O}(n)$ — Exactly $n$ function calls are made.
+- **Auxiliary Space:** $\mathcal{O}(n)$ — Maximum depth of the call stack is $n$.
+
+---
+
+## 6. Example 2: Fibonacci Numbers
+
+### Mathematical Formulation
+$$F(n) = F(n - 1) + F(n - 2) \quad \text{for } n \ge 2$$
+$$\text{Base Cases: } F(0) = 0, \quad F(1) = 1$$
+
+### Recursion Tree for `fib(4)`
+
+```
+                         fib(4)
+                       /        \
+                 fib(3)          fib(2)
+                /      \         /     \
+            fib(2)    fib(1)   fib(1)  fib(0)
+           /      \
+        fib(1)   fib(0)
+```
+
+Notice how `fib(2)` and `fib(1)` are computed multiple times. This is why naive recursive Fibonacci has exponential time complexity.
+
+### C++ Implementation
+
+```cpp
+#include <iostream>
+
+// Returns the nth Fibonacci number (0-indexed: 0, 1, 1, 2, 3, 5, 8...)
+int fibonacci(int n) {
+    // 1. Base Cases
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+
+    // 2. Recursive Step (Tree Recursion)
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    int n = 7;
+    std::cout << "The " << n << "th Fibonacci number is: " << fibonacci(n) << "\n";
+    // Output: 13
+    return 0;
+}
+```
+
+### Complexity Analysis
+- **Time Complexity:** $\mathcal{O}(2^n)$ — Each call branches into two sub-calls.
+- **Auxiliary Space:** $\mathcal{O}(n)$ — The maximum stack depth equals the height of the recursion tree ($n$).
+
+---
+
+## 7. Example 3: Binary Search using Recursion
+
+### Concept
+Binary Search finds a target in a **sorted array** by repeatedly halving the search space:
+- Calculate `mid = low + (high - low) / 2`
+- If `arr[mid] == target`, element found!
+- If `target < arr[mid]`, search the left half: `[low, mid - 1]`
+- If `target > arr[mid]`, search the right half: `[mid + 1, high]`
+- Base Case for failure: `low > high` (search space exhausted)
+
+### Execution Trace
+Searching for `target = 23` in `[2, 5, 8, 12, 16, 23, 38, 56, 72, 91]`:
+
+```
+Call 1: low = 0, high = 9 -> mid = 4 (arr[4] = 16)
+        23 > 16 -> search right half: low = 5, high = 9
+
+Call 2: low = 5, high = 9 -> mid = 7 (arr[7] = 56)
+        23 < 56 -> search left half: low = 5, high = 6
+
+Call 3: low = 5, high = 6 -> mid = 5 (arr[5] = 23)
+        23 == 23 -> FOUND at index 5!
+```
+
+### C++ Implementation
+
+```cpp
+#include <iostream>
+#include <vector>
+
+// Recursive Binary Search
+// Returns the index of target if found, otherwise returns -1
+int recursiveBinarySearch(const std::vector<int>& arr, int low, int high, int target) {
+    // Base Case 1: Search boundary is invalid (Element not present)
+    if (low > high) {
+        return -1;
+    }
+
+    // Calculate mid safely to prevent integer overflow
+    int mid = low + (high - low) / 2;
+
+    // Base Case 2: Target found at mid
+    if (arr[mid] == target) {
+        return mid;
+    }
+
+    // Recursive Case 1: Target lies in the left subarray
+    if (target < arr[mid]) {
+        return recursiveBinarySearch(arr, low, mid - 1, target);
+    }
+
+    // Recursive Case 2: Target lies in the right subarray
+    return recursiveBinarySearch(arr, mid + 1, high, target);
+}
+
+int main() {
+    std::vector<int> numbers = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+    int target = 23;
+
+    int resultIndex = recursiveBinarySearch(numbers, 0, static_cast<int>(numbers.size()) - 1, target);
+
+    if (resultIndex != -1) {
+        std::cout << "Element " << target << " found at index: " << resultIndex << "\n";
+    } else {
+        std::cout << "Element " << target << " not found in array.\n";
+    }
+
+    return 0;
+}
+```
+
+### Complexity Analysis
+- **Time Complexity:**
+  - Best Case: $\mathcal{O}(1)$ (Target is at the initial `mid`)
+  - Worst / Average Case: $\mathcal{O}(\log n)$ (Search range halved every step)
+- **Auxiliary Space:** $\mathcal{O}(\log n)$ — Stack depth corresponds to the number of divisions ($\log_2 n$).
+
+---
+
+## 8. Recursion vs. Iteration
+
+| Feature | Recursion | Iteration (Loops) |
+| :--- | :--- | :--- |
+| **Basic Structure** | Function calls itself | Loop structures (`for`, `while`, `do-while`) |
+| **Termination** | Triggered by base case | Triggered when condition evaluates to `false` |
+| **Memory Overhead** | Higher (creates stack frame for each call) | Minimal ($\mathcal{O}(1)$ auxiliary space) |
+| **Execution Speed** | Slower (function call overhead) | Faster (direct register/CPU jumps) |
+| **Code Readability** | Cleaner for tree/graph traversal, divide & conquer | Can be longer or more verbose for hierarchical problems |
+| **Risk** | Stack Overflow if too deep | Infinite loop (CPU consumption) |
+
+---
+
+## 9. Common Pitfalls & Best Practices
+
+1. **Missing or Incomplete Base Case:**
+   - Always ensure every possible path hits a terminating condition.
+2. **Parameters Not Decreasing / Approaching Base Case:**
+   - E.g., accidentally calling `solve(n)` instead of `solve(n - 1)`.
+3. **Mid-point Integer Overflow:**
+   - Always write `mid = low + (high - low) / 2` instead of `(low + high) / 2` in Binary Search.
+4. **Pass Containers by Reference:**
+   - Always pass large objects (`std::vector`, `std::string`) using `const &` to avoid copying the entire data on every single stack frame:
+     ```cpp
+     // Good: O(1) space per frame
+     void solve(const std::vector<int>& arr, int index);
+
+     // Bad: O(N) space and time copy per frame!
+     void solve(std::vector<int> arr, int index);
+     ```
+5. **Stack Limit Awareness:**
+   - Typical stack limit in standard environments is 1MB to 8MB (~$10^4$ to $10^5$ recursive calls maximum).
+   - If recursion depth can exceed $10^5$, prefer iteration or tailor with dynamic programming / memoization.
